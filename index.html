@@ -21,6 +21,7 @@
         #map-container {
             flex: 1; position: relative; background: #2a221b; overflow: hidden;
             display: flex; justify-content: center; align-items: center; min-height: 0;
+            touch-action: none; /* 手势交给 JS 处理，避免与浏览器缩放/滚动冲突 */
         }
         #hand-drawn-map { width: 100%; height: auto; display: block; }
         .spot-marker {
@@ -44,10 +45,14 @@
             box-shadow: 0 0 12px #ff4500; z-index: 20;
             transform: translate(-50%,-50%) scale(1.6);
         }
-        #panel-control {
-            background-color: rgba(26,21,16,0.97); border-top: 2px solid var(--gold);
-            padding: 12px 15px; display: flex; flex-direction: column; gap: 10px;
-            max-height: 52vh; overflow-y: auto; flex-shrink: 0;
+        /* ===== 缩放/拖动：复位按钮 ===== */
+        #zoom-reset {
+            position: absolute; top: 10px; right: 10px; z-index: 30;
+            width: 34px; height: 34px; border-radius: 50%;
+            border: 1px solid var(--gold); background: rgba(0,0,0,.65);
+            color: var(--gold); font-size: 16px; cursor: pointer;
+            display: flex; justify-content: center; align-items: center;
+            -webkit-tap-highlight-color: transparent;
         }
         /* ===== 语音播放条 ===== */
         .audio-bar {
@@ -189,6 +194,7 @@
             <div class="spot-marker" data-spot="27" style="left:67%; top:15%;" onclick="selectSpot(27)">27</div>
             <div class="spot-marker" data-spot="28" style="left:98%; top:48%;" onclick="selectSpot(28)">28</div>
         </div>
+        <button id="zoom-reset" onclick="resetZoom()" title="复位">⤢</button>
     </div>
 
     <div id="panel-control">
@@ -243,7 +249,7 @@
         8: { cn: "布巴斯提斯门", en: "Bubastite Portal / Gate of Shoshenq I, Karnak", text: "这个庭院叫布巴斯提斯庭院，名字来自东南角那扇门——布巴斯提斯门，第22王朝的舍顺克一世建的。\n舍顺克一世是利比亚裔法老。他在墙上刻了一长串征战巴勒斯坦的战绩，列出一百五十多个被征服的地名。这串地名里有一个被学者反复讨论：\"亚伯拉罕的族人之地\"——这是埃及文献里极少数可能提到以色列的地方。\n更有名的是《圣经》里的对应：一位叫\"示撒\"的埃及王，在罗波安在位第五年上来攻打耶路撒冷，夺走了圣殿和王宫的宝物。学界基本认同，这位示撒就是舍顺克一世。所以你现在看的这面墙，可能是《圣经》里那场战争唯一的同时代\"敌方记录\"。\n同一面墙上还刻着阿蒙把一把剑递给国王——那是\"授权\"的标准构图：神给你武器，你替神打仗。战争在古埃及从来不是侵略，是\"恢复秩序\"。这个说法，每个帝国都用过。\n墙上的胜利浮雕有个固定套路：国王抓着敌人的头发，举起权杖准备砸下去。这个姿势叫\"击打敌人\"，从第一王朝用到罗马时期，是最古老的政治图像。为什么要抓头发？因为在图像语言里，抓着头发等于控制住对方的\"头\"，也就控制住了他的生命和意志。\n旁边一堆被绳子捆着的俘虏，脖子上套着绳圈，绳圈上一般写着地名，代表那座城被拿下了。这是战报，刻在墙上给所有路过的人看。" },
         9: { cn: "第二塔门与巨像", en: "Second Pylon of Karnak & fallen Colossus of Ramesses II", text: "先看门口那尊倒在地上的巨像——第二塔门前最有戏的一块石头。\n它原本是拉美西斯二世的立像，高约十五米。你看它两腿之间，站着一尊小小的女性立像，通说是他的女儿宾特-安塔公主。这个构图在古埃及有专门含义：\"被法老养在膝下的人\"——受他庇护，也暗示继承。堂堂法老的巨像，把女儿护在腿间，王权是这么传递的。\n再看它的脸——磨平了。名字也被改了。这尊像后来被第21王朝的平杰姆挪用，改成自己的像。所以\"这是谁的像\"其实有两个答案都对：它出生时是拉美西斯二世，去世时是平杰姆。一尊像被改过三四个主人的名字，在卡纳克是常态——名字就是存在，谁掌权谁改名。你仔细看，还能发现它至少被重刻过几次，几层主人的痕迹叠在同一块石头上。\n塔门本身由哈特谢普苏特动工，图特摩斯三世完成。跨过这道门，你就从\"外面的院子\"进入了\"神的内部\"——门外是第一庭院，普通人能进；门内是大柱厅，只有洁净的人和祭司能进。\n注意墙面的处理方式：一边是凸雕，图案从石面凸出来；一边是凹雕，往里刻进去。这不是风格偏好，是技术选择——凹雕在强烈阳光下更清楚，不怕被后人磨平，刻得也快。塞提一世爱凸雕，因为光影效果好；拉美西斯二世改用凹雕，因为更耐磨、也更难被抹掉。在卡纳克看浮雕，凸的还是凹的，基本能判断年代先后。\n最后往里看一眼。从这里开始，地面逐级抬高，光线一级级变暗，空间一级级变窄。古人是用身体感受等级的——不需要讲解牌，建筑自己会说话。" },
         10: { cn: "南外墙：卡迭石战役浮雕", en: "Battle of Kadesh Reliefs, South Outer Wall of the Great Hypostyle Hall", text: "绕到大柱厅的南墙外，这面墙上刻的是拉美西斯二世最想让人记住的一件事——卡迭石战役。\n公元前1274年前后，拉美西斯二世率军攻打赫梯人的重镇卡迭石。战况其实相当狼狈：他轻敌冒进，主力被赫梯战车冲散，几乎是孤军突围。但你看浮雕，画面完全是另一个版本——国王立于战车之上，挽弓射箭，敌军成片溃逃，坠河的坠河，求饶的求饶。这就是古埃及的\"官方通稿\"：仗可以打输，画面不能输。它不负责记录历史，它负责制造历史。\n有意思的是这面墙还暴露了一个小秘密：考古学家发现，墙上的战斗场景被人重新刻过一遍——是拉美西斯二世自己下令改的。原来的卡迭石战役刻好后，他又把画面铲掉，换上征服巴勒斯坦的新场景，只有文字说明基本没动。解释很简单：他的庙不够用了。同样的战役他在卢克索神庙、在葬祭殿各刻了一遍，墙面不够写新战功，只好把旧的糊掉。一个国王，篡改自己的墙。\n墙的东端有一大段竖排文字，是卡迭石战役的\"书面报道\"，刻了几百行——这份文字后来还传到了赫梯那边，两国各存一版。三千多年后，学者靠这两个版本，把这场古代世界的著名战役拼了出来。\n看浮雕别只看国王。找找画面边缘那些小人物：缩在堡垒上的守军、扶梯攻城的士兵、被捆成一串的俘虏。官方画面的主角永远是法老，但真实的信息，都藏在角落里。" },
-        11: { cn: "北外墙：塞提一世战争图", en: "Seti I War Reliefs, North Outer Wall of the Great Hypostyle Hall", text: "北墙和南墙是一对父子展：南墙是儿子拉美西斯二世的，这面北墙，是父亲塞提一世的。\n父亲这面墙的工艺明显更好。塞提一世偏爱凸雕——图案从石面上凸出来，靠阳光的阴影显形，刻得慢、废料多，但细节极精。儿子拉美西斯二世改用凹雕，往里刻，速度快、耐风化，也因此能覆盖别人的作品。你把两面墙对比一下，就能一眼看出父子俩的\"预算和耐心\"差别。\n墙上的内容是一连串战役的连环画：从东端开始，国王率军走沙漠路，路边标注着水井的位置——这是真正的军事档案，行军路线图；接着是贝都因人的伏击、攻陷要塞、押着俘虏回来；最后是战利品献给阿蒙、穆特、孔苏三神。\n注意门洞两侧那个重复出现的场景：国王一手抓着一串俘虏的头发，一手高举白色的权杖，准备砸下去。两侧门洞各有一幅，构图完全对称。这类\"仪式性杀戮\"在埃及艺术里用了三千年，从第一王朝一直刻到罗马时期，是最古老的政治图像。它未必对应某一场真实的处决，它是一个符号：秩序压住混沌。\n旁边墙上还有攻陷阿什凯隆城的画面：士兵用斧头砸城门，有人架云梯往上爬，附近山头上还有追杀逃兵的队伍。这是少数能看到\"攻城动作细节\"的场景——大多数浮雕只画国王高大，不画士兵干活。\n最后对比一下保存状况：这面北墙后来很多石料被后人拆去再利用，所以比南墙破损得厉害。南墙反倒因为没人打它的主意，保留得更好。" },
+        11: { cn: "北外墙：塞提一世战争图", en: "Seti I War Reliefs, North Outer Wall of the Great Hypostyle Hall", text: "北墙和南墙是一对父子展：南墙是儿子拉美西斯二世的，这面北墙，是父亲塞提一世的。\n父亲这面墙的工艺明显更好。塞提一世偏爱凸雕——图案从石面上凸出来，靠阳光的阴影显形，刻得慢、废料多，但细节极精。儿子拉美西斯二世改用凹雕，往里刻，速度快、耐风化，也因此能覆盖别人的作品。你把两面墙对比一下，就能一眼看出父子俩的\"预算和耐心\"差别。\n墙上的内容是一连串战役的连环画：从东端开始，国王率军走沙漠路，路边标注着水井的位置——这是真正的军事档案，行军路线图；接着是贝都因人的伏击、攻陷要塞、押着俘虏回来；最后是战利品献给阿蒙、穆特、孔苏三神。\n注意门洞两侧那个重复出现的场景：国王一手抓着一串俘虏的头发，一手高举白色的权杖，准备砸下去。两侧门洞各有一幅，构图完全对称。这类\"仪式性杀戮\"在埃及艺术里用了三千年，从第一王朝用到罗马时期，是最古老的政治图像。它未必对应某一场真实的处决，它是一个符号：秩序压住混沌。\n旁边墙上还有攻陷阿什凯隆城的画面：士兵用斧头砸城门，有人架云梯往上爬，附近山头上还有追杀逃兵的队伍。这是少数能看到\"攻城动作细节\"的场景——大多数浮雕只画国王高大，不画士兵干活。\n最后对比一下保存状况：这面北墙后来很多石料被后人拆去再利用，所以比南墙破损得厉害。南墙反倒因为没人打它的主意，保留得更好。" },
         12: { cn: "大柱厅", en: "Great Hypostyle Hall, Karnak – 134 Papyrus Columns", text: "好，现在停下来。抬头。\n一百三十四根石柱，十六排，占地约五千平方米，长约一百零三米，宽约五十二米。中间两排十二根，高二十一米；其余一百二十二根，高约十二米。整个空间能装下巴黎圣母院。这是人类历史上最大的宗教建筑单体空间之一，三千多年了，没被打破。\n柱子的形状是纸莎草——尼罗河边那种三棱的植物。柱身刻了一道竖棱，模仿植物的茎。中间十二根是\"开花的\"纸莎草，柱头绽放，直径五米四，顶上站一百个人都不挤；旁边的柱子是\"闭合的花苞\"。这不是装饰，是叙事：你走在一条\"正在开花\"的通道上，从含苞走到绽放，从人间走进神界。\n光也设计过。中间两排高柱撑起抬高的屋顶，两侧屋顶低，中间那一段侧墙上开着一排石格窗。太阳走到正中时，光从高窗斜射下来，正好照亮中央通道，其余地方是暗的。你可以脑补一下：三千年前，这里点满油灯，彩色的光在柱林间晃动——那不是庙，那是阿蒙从天上降临的地方。\n柱子主要是塞提一世开的工，他儿子拉美西斯二世接着完成。父子俩在这座厅里各留了一半名字。仔细看还能找到褪色的红、蓝、黄，那是当年的矿物颜料。\n再说两件事。每根柱子上都刻着拉美西斯二世的名字，从柱基一直刻到二十米高的柱头边缘——为什么刻那么高？因为人看不见，神看得见。\n还有，柱厅的屋顶早塌了。1899 年，十一根巨柱因为地下水泡软地基，像多米诺一样倒下。法国考古学家勒格兰主持修复，1902 年完工。你看到的很多柱子是被扶起来的。" },
         13: { cn: "开往卢克索的神船", en: "Sacred Barque Reliefs, North Interior Wall of the Second Pylon, Karnak", text: "回到第二塔门的内侧北墙，这里藏着大柱厅最动人的一幅画——一支正在航行的船队。\n画面上是阿蒙的大神船：船头船尾是公羊头，中间立着一座柱子撑起的小宫殿，宫殿里就是神龛，神龛上盖着帷幔。船的后面跟着孔苏的船和穆特的船——底比斯一家三口，全员出行。船头朝着南边，文字写明：目的地是\"Ipet 南方的居所\"，也就是三公里外的卢克索神庙。\n这是奥佩特节的画面——你在这座神庙里会反复遇到这个节日，因为它就是卡纳克存在的理由。每年尼罗河涨水的时候，阿蒙一家坐船南下，去卢克索\"串门\"，住上十几天再回来。\n但这面墙最妙的地方不是船，是\"船被改过\"。考古学家发现，这里原本刻着一支更老的船队：一条大船被另一条船拖着走，四个拖船的，一个是胡狼头，一个是国王本人，一个是羊头，一个是鹰头。后来墙体扩建，旧画面被铲掉，换成了现在这个版本——新的神船不要拖船了，\"无桅、无帆、无桨、无舵手\"，只有神自己在水上走。\n旧版本还有痕迹留着，仔细看能找到被盖住的旧船桨。商博良当年就注意到了这两版船队的区别，他在笔记里把两版都描了下来。\n所以你站在这里看到的，其实是两次奥佩特节：一次是人划着船送神，一次是神自己走。从\"人抬着神走\"到\"神自己走\"，这道小小的修改，就是神权慢慢膨胀的痕迹。" },
         14: { cn: "巨柱上的三代签名", en: "Column Cartouches of Ramesses II & Ramesses IV, Great Hypostyle Hall", text: "现在走近中间那十二根大柱，看柱子本身——它们不只是柱子，是一份\"分期施工日志\"。\n商博良，就是破译象形文字的那位法国学者，十九世纪仔细看过这些柱子，他的记录今天还管用。他说：每根大柱上绕着刻三个画面，其中面向中央甬道的两面，献祭的都是拉美西斯二世；但第三面——背面那面——署名却是拉美西斯四世，比他晚了大概六十年。\n为什么？因为柱子还没刻完，工程就停了。拉美西斯二世死后几十年，他的后人拉美西斯四世拿起没完工的柱子，接着刻。所以一根柱子上，两个隔了半个多世纪的国王，各占两面和一面。这是卡纳克的常态：没有一任法老把活干完，也没有一任肯把别人的名字留着。\n再看柱头顶上：柱身上部有一圈拉美西斯二世的王名圈，朝着中央甬道竖排堆叠，上面是两种形态的阿蒙交替出现。柱头模仿的是\"开放的纸莎草\"，就是顶上炸开的那一朵，柱头周长约二十一米——和柱子的高度差不多，也就是说，绕柱头走一圈，等于从地面爬到柱顶。\n还有一个冷知识：这些柱身的棱线不是随便刻的。柱子横截面被三条凸棱分成三瓣，棱线从底通到顶。南边那排大柱的最西一条棱，几乎正对着正西；北边那排对着正东。而神庙的中轴线其实偏了大约二十七度，并不正对东西。也就是说，柱子的棱线比神庙本身更\"正\"——这大概是刻柱子的人自己都没意识到的天文巧合。" },
@@ -268,7 +274,7 @@
             1: "images/spot1.jpg",
             2: "images/spot2.jpg",
             3: "images/spot3.jpg",
-            4: null, //此点位暂无实景图,
+            4: null, // 此点位暂无实景图
             5: "images/spot5.jpg",
             6: "images/spot6.jpg",
             7: "images/spot7.jpg",
@@ -286,13 +292,13 @@
             19: null, // 此点位暂无实景图
             20: null, // 此点位暂无实景图
             21: null, // 此点位暂无实景图
-            22: null, //此点位暂无实景图
+            22: null, // 此点位暂无实景图
             23: "images/spot23.jpg",
             24: "images/spot24.jpg",
             25: "images/spot25.jpg",
             26: "images/spot26.jpg",
             27: null, // 此点位暂无实景图
-            28: null, // 此点位暂无实景图，
+            28: null // 此点位暂无实景图
         };
 
         /* ===== 倍速 ===== */
@@ -414,6 +420,164 @@
             const ratio = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
             if (isFinite(player.duration)) player.currentTime = ratio * player.duration;
         }
+
+        /* ===== 地图整体缩放拖动（双指捏合 / 双击放大 / 滚轮，可拖动平移） ===== */
+        (function () {
+            const mc = document.getElementById("map-container");
+            const wrap = mc.querySelector(".map-wrapper");
+            const MIN = 1, MAX = 4;
+
+            wrap.style.transformOrigin = "0 0";
+            wrap.style.willChange = "transform";
+
+            let scale = 1, tx = 0, ty = 0;      // transform 状态
+            let moved = false;                   // 本次手势是否为拖动（抑制误触点击）
+            let mode = "none";                   // none / pan / pinch
+            let startX = 0, startY = 0, baseTx = 0, baseTy = 0;
+            let pinchDist0 = 0, pinchScale0 = 1, pinchMid = null;
+            let lastTapT = 0, lastTapX = 0, lastTapY = 0;
+
+            function baseX() { return wrap.offsetLeft; }
+            function baseY() { return wrap.offsetTop; }
+
+            function apply() {
+                const r = mc.getBoundingClientRect();
+                const w = wrap.offsetWidth * scale, h = wrap.offsetHeight * scale;
+                // 拖动边界：内容始终覆盖容器；缩到 1x 时回正
+                if (w <= r.width) tx = (r.width - w) / 2 - baseX();
+                else tx = Math.min(-baseX(), Math.max(r.width - w - baseX(), tx));
+                if (h <= r.height) ty = (r.height - h) / 2 - baseY();
+                else ty = Math.min(-baseY(), Math.max(r.height - h - baseY(), ty));
+                wrap.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`;
+            }
+
+            function zoomAt(px, py, factor) {
+                const ns = Math.min(MAX, Math.max(MIN, scale * factor));
+                const k = ns / scale;
+                // 以容器坐标 (px,py) 为锚点缩放（wrap 布局原点在 baseX/baseY）
+                tx = (px - baseX()) - ((px - baseX()) - tx) * k;
+                ty = (py - baseY()) - ((py - baseY()) - ty) * k;
+                scale = ns;
+                apply();
+            }
+
+            window.resetZoom = function () {
+                scale = 1; tx = 0; ty = 0;
+                wrap.style.transition = "transform .25s ease";
+                apply();
+                setTimeout(() => wrap.style.transition = "", 260);
+            };
+
+            /* ---- 触摸手势 ---- */
+            mc.addEventListener("touchstart", e => {
+                if (modal.classList.contains("show")) return;
+                if (e.touches.length === 1) {
+                    mode = "pan";
+                    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+                    baseTx = tx; baseTy = ty; moved = false;
+                } else if (e.touches.length === 2) {
+                    mode = "pinch";
+                    const [a, b] = e.touches;
+                    pinchDist0 = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY) || 1;
+                    pinchScale0 = scale;
+                    pinchMid = { x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2 };
+                    moved = true; // 双指期间不算点击
+                }
+            }, { passive: true });
+
+            mc.addEventListener("touchmove", e => {
+                if (modal.classList.contains("show")) return;
+                if (mode === "pan" && e.touches.length === 1 && scale > 1) {
+                    const dx = e.touches[0].clientX - startX;
+                    const dy = e.touches[0].clientY - startY;
+                    if (Math.abs(dx) + Math.abs(dy) > 8) moved = true;
+                    tx = baseTx + dx; ty = baseTy + dy;
+                    apply();
+                } else if (mode === "pinch" && e.touches.length === 2) {
+                    const [a, b] = e.touches;
+                    const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY) || 1;
+                    const r = mc.getBoundingClientRect();
+                    // 从手势起点状态整体重算，保证锚点稳定
+                    const ns = Math.min(MAX, Math.max(MIN, pinchScale0 * d / pinchDist0));
+                    const k = ns / pinchScale0;
+                    const px = pinchMid.x - r.left, py = pinchMid.y - r.top;
+                    scale = pinchScale0;
+                    tx = baseTx; ty = baseTy;
+                    tx = (px - baseX()) - ((px - baseX()) - tx) * k;
+                    ty = (py - baseY()) - ((py - baseY()) - ty) * k;
+                    scale = ns;
+                    apply();
+                }
+                if (mode !== "none") e.preventDefault();
+            }, { passive: false });
+
+            mc.addEventListener("touchend", e => {
+                if (mode === "pinch" && e.touches.length < 2) {
+                    mode = "none";
+                    if (e.touches.length === 1) { // 余下一指转为拖动
+                        mode = "pan";
+                        startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+                        baseTx = tx; baseTy = ty;
+                    }
+                    return;
+                }
+                if (mode === "pan" && e.touches.length === 0) {
+                    mode = "none";
+                    // 双击（双触）放大：300ms 内两次点按同一位置
+                    if (!moved) {
+                        const t = Date.now();
+                        const r = mc.getBoundingClientRect();
+                        const px = (e.changedTouches[0] || { clientX: 0 }).clientX - r.left;
+                        const py = (e.changedTouches[0] || { clientY: 0 }).clientY - r.top;
+                        if (t - lastTapT < 300 && Math.abs(px - lastTapX) < 40 && Math.abs(py - lastTapY) < 40) {
+                            if (scale > 1) resetZoom(); else zoomAt(px, py, 2.5);
+                            lastTapT = 0;
+                        } else {
+                            lastTapT = t; lastTapX = px; lastTapY = py;
+                        }
+                    }
+                }
+            });
+
+            /* ---- 拖动后抑制误触点位点击 ---- */
+            mc.addEventListener("click", e => {
+                if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; }
+            }, true);
+
+            /* ---- 桌面端：滚轮缩放 ---- */
+            mc.addEventListener("wheel", e => {
+                e.preventDefault();
+                const r = mc.getBoundingClientRect();
+                zoomAt(e.clientX - r.left, e.clientY - r.top, e.deltaY < 0 ? 1.15 : 1 / 1.15);
+            }, { passive: false });
+
+            /* ---- 桌面端：鼠标拖动 ---- */
+            mc.addEventListener("mousedown", e => {
+                if (scale === 1) return;
+                mode = "pan"; moved = false;
+                startX = e.clientX; startY = e.clientY; baseTx = tx; baseTy = ty;
+                const onMove = ev => {
+                    const dx = ev.clientX - startX, dy = ev.clientY - startY;
+                    if (Math.abs(dx) + Math.abs(dy) > 6) moved = true;
+                    tx = baseTx + dx; ty = baseTy + dy; apply();
+                };
+                const onUp = () => {
+                    mode = "none";
+                    window.removeEventListener("mousemove", onMove);
+                    window.removeEventListener("mouseup", onUp);
+                };
+                window.addEventListener("mousemove", onMove);
+                window.addEventListener("mouseup", onUp);
+            });
+
+            mc.addEventListener("dblclick", e => {
+                const r = mc.getBoundingClientRect();
+                if (scale > 1) resetZoom();
+                else zoomAt(e.clientX - r.left, e.clientY - r.top, 2.5);
+            });
+
+            window.addEventListener("resize", apply);
+        })();
 
         /* ===== 法老密示：AI 问答（SSE） ===== */
         function handleKeyPress(e) { if (e.key === "Enter") askPharaoh(); }
