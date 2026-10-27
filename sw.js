@@ -10,24 +10,24 @@ const SHELL_TO_CACHE = [
 
 /* 点位图片：逐张缓存，单张失败不拖垮安装 */
 const IMAGE_URLS = [
-  './images/spot1.JPG',
-  './images/spot2.JPG',
-  './images/spot3.JPG',
-  './images/spot5.JPG',
-  './images/spot6.JPG',
-  './images/spot7.JPG',
+  './images/spot1.jpg',
+  './images/spot2.jpg',
+  './images/spot3.jpg',
+  './images/spot5.jpg',
+  './images/spot6.jpg',
+  './images/spot7.jpg',
   './images/spot8.JPG',
   './images/spot9.jpeg',
   './images/spot10.jpeg',
   './images/spot11.jpeg',
-  './images/spot12.JPG',
+  './images/spot12.jpg',
   './images/spot13.png',
   './images/spot16.JPG',
-  './images/spot18.JPG',
-  './images/spot23.JPG',
-  './images/spot24.JPG',
-  './images/spot25.JPG',
-  './images/spot26.JPG'
+  './images/spot18.jpg',
+  './images/spot23.jpg',
+  './images/spot24.jpg',
+  './images/spot25.jpg',
+  './images/spot26.jpg'
 ];
 
 /* 语音：逐段缓存，单段失败不拖垮安装 */
